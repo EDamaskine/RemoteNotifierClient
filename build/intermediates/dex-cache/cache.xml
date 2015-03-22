@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/home/yev/AndroidStudioProjects/RemoteNotifierClient/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.0.0/libs/internal_impl-22.0.0.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="b5b92f469d515a13d778900f6d50c03d12f35504">
+        <dex dex="/home/yev/AndroidStudioProjects/RemoteNotifierClient/app/build/intermediates/pre-dexed/debug/internal_impl-22.0.0-eec14604af8171d88e43cd06e1897beb088e4817.jar" />
+    </item>
+    <item
+        jar="/home/yev/AndroidStudioProjects/RemoteNotifierClient/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.0.0/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="4e86306289ace4aa0cfec44a05ed2b410d36989d">
+        <dex dex="/home/yev/AndroidStudioProjects/RemoteNotifierClient/app/build/intermediates/pre-dexed/debug/classes-3de764b5951dcb9434e64e703e203283a4299a2e.jar" />
+    </item>
+    <item
+        jar="/home/yev/AndroidStudioProjects/RemoteNotifierClient/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.0.0/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="d84409890828e07d344a3b9b1da545dba9897b51">
+        <dex dex="/home/yev/AndroidStudioProjects/RemoteNotifierClient/app/build/intermediates/pre-dexed/debug/classes-35649baf48024bc4edef03e2ed5bb1fab73c5fd1.jar" />
+    </item>
+    <item
+        jar="/home/yev/Android/Sdk/extras/android/m2repository/com/android/support/support-annotations/22.0.0/support-annotations-22.0.0.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="685d0b2c590447e85284ed84712cb363ba04eff8">
+        <dex dex="/home/yev/AndroidStudioProjects/RemoteNotifierClient/app/build/intermediates/pre-dexed/debug/support-annotations-22.0.0-d1eb219896750287fe78e9150347fb0472f6223c.jar" />
+    </item>
+
+</items>
