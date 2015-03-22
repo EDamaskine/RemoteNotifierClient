@@ -68,9 +68,9 @@ public class RemoteNotifierService extends Service {
             try {
                 mListenerSocket = new ServerSocket(PORT);
             } catch (IOException e) {
+                Log.i(sTAG, "Failed to create listener socket.");
                 e.printStackTrace();
-
-                // TODO Stop?
+                return;
             }
 //            doNotification("v2/ID1/ID2/TYPE/DATA/CONTENT/1/2/3");
             while (!Thread.currentThread().isInterrupted()) {
@@ -89,6 +89,7 @@ public class RemoteNotifierService extends Service {
                     e.printStackTrace();
                 }
             }
+            Log.i(sTAG, "Listener thread exiting.");
         }
     }
 
