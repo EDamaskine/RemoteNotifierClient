@@ -114,6 +114,7 @@ public class RemoteNotifierService extends Service {
     public void onDestroy() {
         super.onDestroy();
         mListenerThread.interrupt(); // redundant?
+        // This called but listener thread is still around (for a bit).
         if (bLOG) {
             Log.i(sTAG, "onDestroy");
         }

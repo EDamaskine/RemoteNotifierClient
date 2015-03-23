@@ -19,7 +19,6 @@ public class MainActivity extends Activity {
             Log.i(sTAG, "onCreate");
         }
         setContentView(R.layout.activity_main);
-        startService(new Intent(this, RemoteNotifierService.class));
     }
 
     // EOD - stopped means not visible
@@ -29,6 +28,7 @@ public class MainActivity extends Activity {
         if (bLOG) {
             Log.i(sTAG, "onStart");
         }
+        startService(new Intent(this, RemoteNotifierService.class));
     }
 
     @Override
