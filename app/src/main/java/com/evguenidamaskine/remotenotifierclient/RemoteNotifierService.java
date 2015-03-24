@@ -27,9 +27,9 @@ import java.util.HashMap;
 
 public class RemoteNotifierService extends Service {
 
-    private final boolean bLOG = true;
+    private final static boolean bLOG = true;
     private final String sTAG = getClass().getSimpleName();
-    private final int PORT = 10600;
+    private final static int PORT = 10600;
 
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
@@ -45,20 +45,20 @@ public class RemoteNotifierService extends Service {
 
     @Override
     public void onCreate() {
-        // TODO ???        super.onCreate();
-        
+        super.onCreate();
         if (bLOG) {
             Log.i(sTAG, "onCreate");
         }
 
-
+        // Setup command handler
         HandlerThread thread = new HandlerThread("ServiceStartArguments",
             Process.THREAD_PRIORITY_BACKGROUND);
 
         thread.start();
-
         mServiceLooper = thread.getLooper();
         mServiceHandler = new ServiceHandler(mServiceLooper);
+        
+        // Socket thread
         mListenerThread = new Thread(new ListenerThread());
     }
 
@@ -68,15 +68,15 @@ public class RemoteNotifierService extends Service {
             try {
                 mListenerSocket = new ServerSocket(PORT);
             } catch (IOException e) {
-                Log.i(sTAG, "Failed to create listener socket.");
+                Log.e(sTAG, "Failed to create listener socket.");
                 e.printStackTrace();
                 return;
             }
-//            doNotification("v2/ID1/ID2/TYPE/DATA/CONTENT/1/2/3");
+
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     if (bLOG) {
-                        Log.i(sTAG, "Listening..." + PORT);
+                        Log.i(sTAG, "Listening on " + PORT);
                     }
                     Socket socket = mListenerSocket.accept();
                     // Read here, not expecting simultaneous connections
@@ -86,17 +86,26 @@ public class RemoteNotifierService extends Service {
                     String s = new String(msgBytes, 0, n);
                     mServiceHandler.post(new UIUpdater(s));
                 } catch (IOException e) {
+                    Log.e(sTAG, "Error in listener.");
                     e.printStackTrace();
                 }
             }
+            
             Log.i(sTAG, "Listener thread exiting.");
+            if (mListenerSocket != null) {
+                try {
+                    mListenerSocket.close();
+                    mListenerSocket = null;                    
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
 
     /**
-     * Start (and restart on configuration change).
-     * Port, notification type, etc. are packed into Intent
+     * Start or configuration change.
     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -105,21 +114,29 @@ public class RemoteNotifierService extends Service {
         }
 
         Message msg = mServiceHandler.obtainMessage();
-        msg.setData(intent.getBundleExtra("config"));
+        msg.setData(intent.getBundleExtra("config")); // TODO
         mServiceHandler.handleMessage(msg);
         return START_STICKY;
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mListenerThread.interrupt(); // redundant?
-        // This called but listener thread is still around (for a bit).
+    public void onDestroy() {       
         if (bLOG) {
             Log.i(sTAG, "onDestroy");
         }
 
+        mListenerThread.interrupt(); // ???
+
+        // Close socket to break the block in accept
+        try {
+            mListenerSocket.close(); // stackoverflow advice...
+        } catch (IOException e) {
+            Log.i(sTAG, "Error closing socket.");
+            e.printStackTrace();
+        }
+        super.onDestroy();
     }
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -130,6 +147,7 @@ public class RemoteNotifierService extends Service {
         public ServiceHandler(Looper looper) {
             super(looper);
         }
+
         @Override
         public void handleMessage(Message msg) {
             if (!bIsListening) {
@@ -138,6 +156,7 @@ public class RemoteNotifierService extends Service {
             }
         }
     }
+
 
     class UIUpdater implements Runnable {
         public UIUpdater(String s) {
