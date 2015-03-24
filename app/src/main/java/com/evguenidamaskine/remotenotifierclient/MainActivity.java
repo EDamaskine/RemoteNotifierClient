@@ -86,6 +86,4 @@ public class MainActivity extends Activity {
             Log.i(sTAG, "onRestoreInstanceState");
         }
     }
-
-
 }

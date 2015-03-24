@@ -33,7 +33,7 @@ public class RemoteNotifierService extends Service {
 
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
-    private boolean bIsListening = false;
+    volatile private boolean bIsListening = false; // TODO volatile?
 
     private Thread mListenerThread = null;
 
@@ -62,6 +62,7 @@ public class RemoteNotifierService extends Service {
         mListenerThread = new Thread(new ListenerThread());
     }
 
+    // TODO Rework with bListener
     class ListenerThread implements Runnable {
         @Override
         public void run() {
@@ -70,9 +71,10 @@ public class RemoteNotifierService extends Service {
             } catch (IOException e) {
                 Log.e(sTAG, "Failed to create listener socket.");
                 e.printStackTrace();
+                bIsListening = false;
                 return;
             }
-
+            bIsListening = true;
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     if (bLOG) {
@@ -87,6 +89,7 @@ public class RemoteNotifierService extends Service {
                     mServiceHandler.post(new UIUpdater(s));
                 } catch (IOException e) {
                     Log.e(sTAG, "Error in listener.");
+                    bIsListening = false;
                     e.printStackTrace();
                 }
             }
@@ -95,11 +98,13 @@ public class RemoteNotifierService extends Service {
             if (mListenerSocket != null) {
                 try {
                     mListenerSocket.close();
-                    mListenerSocket = null;                    
+                    mListenerSocket = null;
+                    bIsListening = false;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+            bIsListening = false;
         }
     }
 
@@ -114,7 +119,7 @@ public class RemoteNotifierService extends Service {
         }
 
         Message msg = mServiceHandler.obtainMessage();
-        msg.setData(intent.getBundleExtra("config")); // TODO
+//        msg.setData(intent.getBundleExtra("config")); // this crashes
         mServiceHandler.handleMessage(msg);
         return START_STICKY;
     }
@@ -152,7 +157,7 @@ public class RemoteNotifierService extends Service {
         public void handleMessage(Message msg) {
             if (!bIsListening) {
                 mListenerThread.start();
-                bIsListening = true;
+// Set in listener thread                bIsListening = true;
             }
         }
     }
